@@ -1,27 +1,43 @@
 <?php
+
+use App\Enums\RolesEnum;
+
 return [
     'permissions' => [
-        'super-admin' => ['*'],
-
-        'manager' => [
-            'departments.viewAny',
-            'departments.view',
-            'departments.create',
-            'departments.update',
-            'employees.viewAny',
-            'employees.view',
-            'employees.create',
+        RolesEnum::Admin->value => [
+            'Department.viewAny',
+            'Department.view',
+            'Department.create',
+            'Department.update',
+            'Department.delete',
+            'Department.forceDelete',
+            'Employee.viewAny',
+            'Employee.view',
+            'Employee.create',
+            'Employee.update',
+            'Employee.delete',
+            'Employee.forceDelete',
         ],
 
-        'supervisor' => [
-            'departments.viewAny',
-            'departments.view',
-            'employees.viewAny',
-            'employees.view',
+        RolesEnum::Manager->value => [
+            'Department.viewAny',
+            'Department.view',
+            'Department.create',
+            'Department.update',
+            'Employee.viewAny',
+            'Employee.view',
+            'Employee.create',
         ],
 
-        'staff' => [
-            'employees.view',
+        RolesEnum::Supervisor->value => [
+            'Department.viewAny',
+            'Department.view',
+            'Employee.viewAny',
+            'Employee.view',
+        ],
+
+        RolesEnum::Staff->value => [
+            'Employee.view',
         ],
     ],
 ];

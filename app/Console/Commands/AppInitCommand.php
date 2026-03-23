@@ -8,6 +8,9 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class AppInitCommand extends Command
 {
@@ -20,9 +23,11 @@ class AppInitCommand extends Command
         $departments = $this->importDepartmentsFromJson();
         $users = $this->importUsersFromJson();
         $employees = $this->importEmployeesFromJson();
+        $authorization = $this->syncPermissionsAndRoles();
+        $assignments = $this->assignRolesToUsers();
 
         $this->newLine();
-        $this->info("App initialization complete. Imported or updated {$departments} departments, {$users} users, and {$employees} employees.");
+        $this->info("App initialization complete. Imported or updated {$departments} departments, {$users} users, {$employees} employees, {$authorization['permissions']} permissions, {$authorization['roles']} roles, and {$assignments} user role assignments.");
 
         return self::SUCCESS;
     }
@@ -146,6 +151,72 @@ class AppInitCommand extends Command
         $employeeData->each(fn (array $employee) => $this->line("Employee ready: {$employee['email']}"));
 
         return $employeeData->count();
+    }
+
+    private function syncPermissionsAndRoles(): array
+    {
+        $this->info('Syncing roles and permissions...');
+
+        $guard = config('auth.defaults.guard', 'web');
+        $permissionsByRole = collect(config('employee.permissions', []));
+
+        $permissionNames = $permissionsByRole
+            ->flatten()
+            ->unique()
+            ->values();
+
+        $permissionNames->each(function (string $permission) use ($guard): void {
+            Permission::findOrCreate($permission, $guard);
+        });
+
+        $permissionsByRole->each(function (array $permissions, string $roleName) use ($guard): void {
+            $role = Role::findOrCreate($roleName, $guard);
+            $role->syncPermissions($permissions);
+        });
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        return [
+            'permissions' => $permissionNames->count(),
+            'roles' => $permissionsByRole->count(),
+        ];
+    }
+
+
+    private function assignRolesToUsers(): int
+    {
+        $this->info('Assigning roles to users...');
+
+        return Employee::query()
+            ->whereNotNull('user_id')
+            ->get()
+            ->reduce(function (int $count, Employee $employee): int {
+                $roleName = $employee->role instanceof \BackedEnum
+                    ? $employee->role->value
+                    : (string) $employee->role;
+
+                if ($roleName === '') {
+                    return $count;
+                }
+
+                $user = User::query()->find($employee->user_id);
+
+                if (! $user) {
+                    $this->warn("User not found for employee email '{$employee->email}'.");
+
+                    return $count;
+                }
+
+                $this->assignRoleToUser($user, $roleName);
+
+                return $count + 1;
+            }, 0);
+    }
+
+    private function assignRoleToUser(User $user, string $roleName): void
+    {
+        $user->syncRoles([$roleName]);
+        $this->line("Assigned role '{$roleName}' to user '{$user->email}'.");
     }
 
     private function mapUserFile(string $file, string $password): ?array

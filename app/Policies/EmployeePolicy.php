@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\RolesEnum;
 use App\Models\Employee;
 use App\Models\User;
 
@@ -9,37 +10,37 @@ class EmployeePolicy
 {
     public function before(User $user, string $ability): ?bool
     {
-        return $this->hasPermission($user, '*') ? true : null;
+        return $user->hasRole(RolesEnum::Admin->value) ? true : null;
     }
 
     public function viewAny(User $user): bool
     {
-        return $this->hasPermission($user, 'employees.viewAny');
+        return $user->can('Employee.viewAny');
     }
 
     public function view(User $user, Employee $employee): bool
     {
-        return $this->hasPermission($user, 'employees.view');
+        return $user->can('Employee.view');
     }
 
     public function create(User $user): bool
     {
-        return $this->hasPermission($user, 'employees.create');
+        return $user->can('Employee.create');
     }
 
     public function update(User $user, Employee $employee): bool
     {
-        return $this->hasPermission($user, 'employees.update');
+        return $user->can('Employee.update');
     }
 
     public function delete(User $user, Employee $employee): bool
     {
-        return $this->hasPermission($user, 'employees.delete');
+        return $user->can('Employee.delete');
     }
 
     public function deleteAny(User $user): bool
     {
-        return $this->hasPermission($user, 'employees.delete');
+        return $user->can('Employee.delete');
     }
 
     public function restore(User $user, Employee $employee): bool
@@ -54,24 +55,11 @@ class EmployeePolicy
 
     public function forceDelete(User $user, Employee $employee): bool
     {
-        return $this->hasPermission($user, 'employees.forceDelete');
+        return $user->can('Employee.forceDelete');
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $this->hasPermission($user, 'employees.forceDelete');
-    }
-
-    private function hasPermission(User $user, string $permission): bool
-    {
-        $role = $user->permissionRole();
-
-        if (! $role) {
-            return false;
-        }
-
-        $permissions = config("employee.permissions.{$role}", []);
-
-        return in_array('*', $permissions, true) || in_array($permission, $permissions, true);
+        return $user->can('Employee.forceDelete');
     }
 }

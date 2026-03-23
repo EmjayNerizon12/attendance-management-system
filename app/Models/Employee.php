@@ -39,5 +39,4 @@ class Employee extends Model
         'date_hired' => 'date',
         'deleted_at' => 'datetime',
     ];
-  
 }
