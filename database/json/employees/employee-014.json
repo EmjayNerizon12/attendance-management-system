@@ -1,0 +1,13 @@
+{
+    "fname":  "Vanessa",
+    "mname":  "Lynn",
+    "lname":  "Gutierrez",
+    "suffix":  null,
+    "email":  "vanessa.gutierrez@example.com",
+    "phone":  "0900000014",
+    "role":  "supervisor",
+    "department":  "Operations",
+    "address":  "63 Laurel St, General Santos",
+    "date_hired":  "2023-08-25",
+    "user_id":  null
+}

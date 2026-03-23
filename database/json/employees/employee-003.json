@@ -1,0 +1,13 @@
+{
+    "fname":  "Daniel",
+    "mname":  "Reyes",
+    "lname":  "Cruz",
+    "suffix":  null,
+    "email":  "daniel.cruz@example.com",
+    "phone":  "0900000003",
+    "role":  "staff",
+    "department":  "Information Technology",
+    "address":  "78 Luna St, Cebu City",
+    "date_hired":  "2023-02-20",
+    "user_id":  null
+}

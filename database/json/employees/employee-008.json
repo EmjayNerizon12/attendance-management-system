@@ -1,0 +1,13 @@
+{
+    "fname":  "Christine",
+    "mname":  "Joy",
+    "lname":  "Navarro",
+    "suffix":  null,
+    "email":  "christine.navarro@example.com",
+    "phone":  "0900000008",
+    "role":  "staff",
+    "department":  "Human Resources",
+    "address":  "31 Acacia St, Pasig",
+    "date_hired":  "2023-05-12",
+    "user_id":  null
+}

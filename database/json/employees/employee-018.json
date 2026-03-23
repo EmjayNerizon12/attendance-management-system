@@ -1,0 +1,13 @@
+{
+    "fname":  "Beatrice",
+    "mname":  "Claire",
+    "lname":  "Rivera",
+    "suffix":  null,
+    "email":  "beatrice.rivera@example.com",
+    "phone":  "0900000018",
+    "role":  "supervisor",
+    "department":  "Customer Service",
+    "address":  "11 Mahogany St, Parañaque",
+    "date_hired":  "2023-11-02",
+    "user_id":  null
+}

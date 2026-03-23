@@ -1,0 +1,13 @@
+{
+    "fname":  "Michael",
+    "mname":  "James",
+    "lname":  "Garcia",
+    "suffix":  null,
+    "email":  "michael.garcia@example.com",
+    "phone":  "0900000005",
+    "role":  "manager",
+    "department":  "Human Resources",
+    "address":  "90 Aguinaldo Hwy, Cavite",
+    "date_hired":  "2023-03-22",
+    "user_id":  null
+}

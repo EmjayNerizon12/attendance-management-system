@@ -1,0 +1,13 @@
+{
+    "fname":  "Samantha",
+    "mname":  "Grace",
+    "lname":  "Aquino",
+    "suffix":  null,
+    "email":  "samantha.aquino@example.com",
+    "phone":  "0900000010",
+    "role":  "supervisor",
+    "department":  "Finance",
+    "address":  "84 Jasmine St, Antipolo",
+    "date_hired":  "2023-06-19",
+    "user_id":  null
+}

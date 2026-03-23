@@ -1,0 +1,13 @@
+{
+    "fname":  "John",
+    "mname":  "Allen",
+    "lname":  "Carter",
+    "suffix":  null,
+    "email":  "john.carter@example.com",
+    "phone":  "0900000001",
+    "role":  "manager",
+    "department":  "Information Technology",
+    "address":  "123 Mabini St, Manila",
+    "date_hired":  "2023-01-15",
+    "user_id":  null
+}

@@ -1,0 +1,13 @@
+{
+    "fname":  "Angela",
+    "mname":  "Mae",
+    "lname":  "Torres",
+    "suffix":  null,
+    "email":  "angela.torres@example.com",
+    "phone":  "0900000004",
+    "role":  "staff",
+    "department":  "Information Technology",
+    "address":  "12 Bonifacio Rd, Davao City",
+    "date_hired":  "2023-03-05",
+    "user_id":  null
+}

@@ -1,0 +1,13 @@
+{
+    "fname":  "Kimberly",
+    "mname":  "Rose",
+    "lname":  "Morales",
+    "suffix":  null,
+    "email":  "kimberly.morales@example.com",
+    "phone":  "0900000016",
+    "role":  "staff",
+    "department":  "Operations",
+    "address":  "44 Molave St, Caloocan",
+    "date_hired":  "2023-09-29",
+    "user_id":  null
+}

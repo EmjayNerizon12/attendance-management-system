@@ -1,0 +1,13 @@
+{
+    "fname":  "Joshua",
+    "mname":  "Kent",
+    "lname":  "Diaz",
+    "suffix":  null,
+    "email":  "joshua.diaz@example.com",
+    "phone":  "0900000013",
+    "role":  "manager",
+    "department":  "Operations",
+    "address":  "29 P. Burgos St, Cagayan de Oro",
+    "date_hired":  "2023-08-08",
+    "user_id":  null
+}

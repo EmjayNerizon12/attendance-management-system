@@ -1,0 +1,13 @@
+{
+    "fname":  "Brian",
+    "mname":  "Lee",
+    "lname":  "Valdez",
+    "suffix":  null,
+    "email":  "brian.valdez@example.com",
+    "phone":  "0900000015",
+    "role":  "staff",
+    "department":  "Operations",
+    "address":  "8 Katipunan Ave, Marikina",
+    "date_hired":  "2023-09-11",
+    "user_id":  null
+}

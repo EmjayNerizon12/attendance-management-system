@@ -1,0 +1,13 @@
+{
+    "fname":  "Robert",
+    "mname":  "Dean",
+    "lname":  "Mendoza",
+    "suffix":  null,
+    "email":  "robert.mendoza@example.com",
+    "phone":  "0900000007",
+    "role":  "staff",
+    "department":  "Human Resources",
+    "address":  "21 Yakal St, Makati",
+    "date_hired":  "2023-04-28",
+    "user_id":  null
+}

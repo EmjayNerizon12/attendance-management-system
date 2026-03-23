@@ -1,0 +1,13 @@
+{
+    "fname":  "Isabella",
+    "mname":  "Marie",
+    "lname":  "Domingo",
+    "suffix":  null,
+    "email":  "isabella.domingo@example.com",
+    "phone":  "0900000020",
+    "role":  "staff",
+    "department":  "Customer Service",
+    "address":  "95 Camia St, Muntinlupa",
+    "date_hired":  "2023-12-07",
+    "user_id":  null
+}

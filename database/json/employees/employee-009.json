@@ -1,0 +1,13 @@
+{
+    "fname":  "Kevin",
+    "mname":  "Paul",
+    "lname":  "Ramos",
+    "suffix":  null,
+    "email":  "kevin.ramos@example.com",
+    "phone":  "0900000009",
+    "role":  "manager",
+    "department":  "Finance",
+    "address":  "15 Sampaguita St, Taguig",
+    "date_hired":  "2023-06-01",
+    "user_id":  null
+}

@@ -1,0 +1,13 @@
+{
+    "fname":  "Nicole",
+    "mname":  "Faith",
+    "lname":  "Castro",
+    "suffix":  null,
+    "email":  "nicole.castro@example.com",
+    "phone":  "0900000012",
+    "role":  "staff",
+    "department":  "Finance",
+    "address":  "17 Del Pilar St, Bacolod",
+    "date_hired":  "2023-07-21",
+    "user_id":  null
+}
