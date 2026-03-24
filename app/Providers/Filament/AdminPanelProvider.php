@@ -12,6 +12,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -19,6 +20,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -31,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Yellow,
                 'secondary' => Color::Slate,
                 'success' => Color::Green,
                 'danger' => Color::Red,
@@ -63,12 +65,11 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearch(false)
             ->defaultThemeMode(ThemeMode::Dark)
             ->brandName('Ctrl-Alt-Elite')
-            ->brandLogo(asset('images/employee.png'))
+            ->brandLogo(asset('images/logo.png'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('images/favicon.ico'))
             ->maxContentWidth(Width::Full)
             ->font('Poppins')
             ->passwordReset();
-        
     }
 }

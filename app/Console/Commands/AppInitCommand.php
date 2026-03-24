@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\EmploymentTypeEnum;
 use App\Enums\EmployeeRoleEnum;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\JobTitle;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -126,16 +129,42 @@ class AppInitCommand extends Command
             ->get()
             ->keyBy('email');
 
+        $jobTitleData = $employeeData
+            ->pluck('job_title')
+            ->filter()
+            ->unique()
+            ->map(fn (string $name): array => [
+                'name' => $name,
+                'description' => null,
+            ])
+            ->values();
+
+        if ($jobTitleData->isNotEmpty()) {
+            JobTitle::upsert($jobTitleData->all(), uniqueBy: ['name'], update: ['description']);
+        }
+
         $departmentsByName = Department::query()
             ->whereIn('name', $employeeData->pluck('department')->unique()->all())
             ->get()
             ->keyBy('name');
 
+        $jobTitlesByName = JobTitle::query()
+            ->whereIn('name', $employeeData->pluck('job_title')->filter()->unique()->all())
+            ->get()
+            ->keyBy('name');
+
+        $existingEmployeeIdsByEmail = Employee::query()
+            ->whereIn('email', $employeeData->pluck('email')->all())
+            ->pluck('id', 'email');
+
         $employeeData = $employeeData
-            ->map(function (array $employee) use ($usersByEmail, $departmentsByName) {
+            ->map(function (array $employee) use ($usersByEmail, $departmentsByName, $jobTitlesByName, $existingEmployeeIdsByEmail) {
+                $employee['id'] = $existingEmployeeIdsByEmail->get($employee['email']) ?? (string) Str::uuid();
                 $employee['user_id'] = optional($usersByEmail->get($employee['email']))->id;
                 $employee['department_id'] = optional($departmentsByName->get($employee['department']))->id;
+                $employee['job_title_id'] = optional($jobTitlesByName->get($employee['job_title']))->id;
                 unset($employee['department']);
+                unset($employee['job_title']);
 
                 return $employee;
             })
@@ -145,7 +174,7 @@ class AppInitCommand extends Command
         Employee::upsert(
             $employeeData->all(),
             uniqueBy: ['email'],
-            update: ['fname', 'mname', 'lname', 'suffix', 'phone', 'role', 'address', 'date_hired', 'department_id', 'user_id']
+            update: ['fname', 'mname', 'lname', 'suffix', 'phone', 'role', 'employment_type', 'address', 'hire_date', 'salary', 'department_id', 'job_title_id', 'user_id']
         );
 
         $employeeData->each(fn (array $employee) => $this->line("Employee ready: {$employee['email']}"));
@@ -274,9 +303,12 @@ class AppInitCommand extends Command
             'email' => trim((string) ($data['email'] ?? '')),
             'phone' => trim((string) ($data['phone'] ?? '')),
             'role' => trim((string) ($data['role'] ?? EmployeeRoleEnum::DEFAULT->value)) ?: EmployeeRoleEnum::DEFAULT->value,
+            'employment_type' => trim((string) ($data['employment_type'] ?? EmploymentTypeEnum::FullTime->value)) ?: EmploymentTypeEnum::FullTime->value,
             'department' => trim((string) ($data['department'] ?? '')),
+            'job_title' => trim((string) ($data['job_title'] ?? '')) ?: null,
             'address' => trim((string) ($data['address'] ?? '')),
-            'date_hired' => trim((string) ($data['date_hired'] ?? '')) ?: null,
+            'hire_date' => trim((string) ($data['hire_date'] ?? ($data['date_hired'] ?? ''))) ?: null,
+            'salary' => filled($data['salary'] ?? null) ? (float) $data['salary'] : null,
         ];
 
         if ($employee['fname'] === '' || $employee['lname'] === '' || $employee['email'] === '' || $employee['phone'] === '' || $employee['department'] === '' || $employee['address'] === '') {
@@ -291,8 +323,20 @@ class AppInitCommand extends Command
             return null;
         }
 
-        if ($employee['date_hired'] !== null && strtotime($employee['date_hired']) === false) {
-            $this->warn("Skipping {$file}: invalid date_hired '{$employee['date_hired']}'.");
+        if (! in_array($employee['employment_type'], array_column(EmploymentTypeEnum::cases(), 'value'), true)) {
+            $this->warn("Skipping {$file}: invalid employment_type '{$employee['employment_type']}'.");
+
+            return null;
+        }
+
+        if ($employee['hire_date'] !== null && strtotime($employee['hire_date']) === false) {
+            $this->warn("Skipping {$file}: invalid hire_date '{$employee['hire_date']}'.");
+ 
+            return null;
+        }
+
+        if (($employee['salary'] !== null) && (! is_numeric($employee['salary']))) {
+            $this->warn("Skipping {$file}: invalid salary '{$employee['salary']}'.");
 
             return null;
         }

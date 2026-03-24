@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Employees\Tables;
 
 use App\Models\Employee;
+use Illuminate\Support\Facades\Gate;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
@@ -12,6 +14,8 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -29,6 +33,10 @@ class EmployeesTable
                 TextColumn::make('department.name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('jobTitle.name')
+                    ->label('Job Title')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->searchable(),
@@ -39,6 +47,15 @@ class EmployeesTable
                     ->badge()
                     ->color(fn($state) => $state->getColor())
                     ->icon(fn($state) => $state->getIcon()),
+                TextColumn::make('employment_type')
+                    ->label('Employment Type')
+                    ->badge(),
+                TextColumn::make('hire_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('salary')
+                    ->money('USD')
+                    ->sortable(),
                 TextColumn::make('address')
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -58,28 +75,36 @@ class EmployeesTable
                 SelectFilter::make('department_id')
                     ->label('Department')
                     ->relationship('department', 'name'),
+                SelectFilter::make('job_title_id')
+                    ->label('Job Title')
+                    ->relationship('jobTitle', 'name'),
+                SelectFilter::make('employment_type')
+                    ->label('Employment Type')
+                    ->options(\App\Enums\EmploymentTypeEnum::class),
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->visible(fn (Employee $record): bool => auth()->user()?->can('view', $record) ?? false),
-                EditAction::make()
-                    ->visible(fn (Employee $record): bool => auth()->user()?->can('update', $record) ?? false),
-                DeleteAction::make()
-                    ->visible(fn (Employee $record): bool => auth()->user()?->can('delete', $record) ?? false),
-                RestoreAction::make()
-                    ->visible(fn (Employee $record): bool => auth()->user()?->can('restore', $record) ?? false),
-                ForceDeleteAction::make()
-                    ->visible(fn (Employee $record): bool => auth()->user()?->can('forceDelete', $record) ?? false),
+                ActionGroup::make([
+                   EditAction::make()
+                        ->visible(fn(Employee $record): bool => Gate::allows('update', $record)),
+                    DeleteAction::make()
+                        ->visible(fn(Employee $record): bool => Gate::allows('delete', $record)),
+                ])
+                    ->button()
+                    ->color('gray')
+                    ->label('Actions')
+                    ->icon(Heroicon::ChevronDown)
+                    ->iconPosition(IconPosition::After)
+                    ->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(fn (): bool => auth()->user()?->can('deleteAny', Employee::class) ?? false),
+                        ->visible(fn(): bool => Gate::allows('deleteAny', Employee::class)),
                     RestoreBulkAction::make()
-                        ->visible(fn (): bool => auth()->user()?->can('restoreAny', Employee::class) ?? false),
+                        ->visible(fn(): bool => Gate::allows('restoreAny', Employee::class)),
                     ForceDeleteBulkAction::make()
-                        ->visible(fn (): bool => auth()->user()?->can('forceDeleteAny', Employee::class) ?? false),
+                        ->visible(fn(): bool => Gate::allows('forceDeleteAny', Employee::class)),
                 ]),
             ]);
     }

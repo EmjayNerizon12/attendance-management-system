@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Employees\Schemas;
 
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -39,8 +40,22 @@ class EmployeeForm
                     ->searchable()
                     ->preload()
                     ->required(),
+                Select::make('job_title_id')
+                    ->label('Job Title')
+                    ->relationship('jobTitle', 'name')
+                    ->searchable()
+                    ->preload(),
+                Select::make('employment_type')
+                    ->label('Employment Type')
+                    ->options(\App\Enums\EmploymentTypeEnum::class)
+                    ->default(\App\Enums\EmploymentTypeEnum::FullTime)
+                    ->required(),
                 TextInput::make('address')
                     ->required(),
+                DatePicker::make('hire_date'),
+                TextInput::make('salary')
+                    ->numeric()
+                    ->prefix('$'),
                 TextInput::make('user_id')
                     ->numeric(),
             ]);
