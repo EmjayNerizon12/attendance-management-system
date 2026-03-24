@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Departments;
 use App\Filament\Resources\Departments\Pages\ManageDepartments;
 use App\Models\Department;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -16,6 +17,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Columns\TextColumn;
@@ -26,11 +28,16 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';
+    protected static string|\UnitEnum|null $navigationGroup = 'Human Resources';
+    protected static ?int $navigationSort = 1;
 
+      public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -57,10 +64,17 @@ class DepartmentResource extends Resource
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                    RestoreAction::make(),
+                    ForceDeleteAction::make(),
+                ])
+                    ->button()
+                    ->color('gray')
+                    ->label('Actions')
+                    ->icon(Heroicon::ChevronDown)
+                    ->iconPosition(IconPosition::After),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
