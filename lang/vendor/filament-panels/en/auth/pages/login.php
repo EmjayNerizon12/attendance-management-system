@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'title' => 'Ctrl-Alt-Elite',
-    'heading' => 'Ctrl-Alt-Elite',
+    'title' => 'Foxter',
+    'heading' => 'Foxter',
 ];
