@@ -17,7 +17,9 @@ class EmployeeStats extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Employee', $this->getPageTableQuery()->count())
+            Stat::make('Total Employee', $this->getPageTableQuery()->count()),
+            Stat::make('Active Employee', $this->getPageTableQuery()->where('is_active', true)->count()),
+            Stat::make('Inactive Employee', $this->getPageTableQuery()->where('is_active', false)->count()),
         ];
     }
 }
