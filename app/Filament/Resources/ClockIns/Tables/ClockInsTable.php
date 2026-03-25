@@ -5,10 +5,14 @@ namespace App\Filament\Resources\ClockIns\Tables;
 use App\Enums\RolesEnum;
 use App\Models\ClockIn;
 use App\Models\Employee;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -52,8 +56,17 @@ class ClockInsTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                ->button()
+                    ->color('gray')
+                    ->label('Actions')
+                    ->icon(Heroicon::ChevronDown)
+                    ->iconPosition(IconPosition::After)
+                    ->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
