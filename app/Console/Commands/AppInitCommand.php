@@ -24,13 +24,14 @@ class AppInitCommand extends Command
     public function handle(): int
     {
         $departments = $this->importDepartmentsFromJson();
+        $jobTitles = $this->createSampleJobTitles();
         $users = $this->importUsersFromJson();
         $employees = $this->importEmployeesFromJson();
         $authorization = $this->syncPermissionsAndRoles();
         $assignments = $this->assignRolesToUsers();
 
         $this->newLine();
-        $this->info("App initialization complete. Imported or updated {$departments} departments, {$users} users, {$employees} employees, {$authorization['permissions']} permissions, {$authorization['roles']} roles, and {$assignments} user role assignments.");
+        $this->info("App initialization complete. Imported or updated {$departments} departments, {$jobTitles} job titles, {$users} users, {$employees} employees, {$authorization['permissions']} permissions, {$authorization['roles']} roles, and {$assignments} user role assignments.");
 
         return self::SUCCESS;
     }
@@ -99,6 +100,40 @@ class AppInitCommand extends Command
         $userData->each(fn (array $user) => $this->line("User ready: {$user['email']} ({$user['name']})"));
 
         return $userData->count();
+    }
+
+    private function createSampleJobTitles(): int
+    {
+        $this->info('Creating sample job titles...');
+
+        $jobTitles = collect([
+            ['name' => 'Human Resources Manager', 'description' => 'Oversees recruitment, employee relations, and HR policy implementation.'],
+            ['name' => 'Payroll Officer', 'description' => 'Processes payroll, compensation records, and salary adjustments accurately.'],
+            ['name' => 'Attendance Coordinator', 'description' => 'Monitors attendance records, schedules, and timekeeping compliance.'],
+            ['name' => 'Administrative Assistant', 'description' => 'Supports daily office operations, documentation, and communication workflows.'],
+            ['name' => 'Finance Officer', 'description' => 'Handles budgeting, reporting, and financial transaction monitoring.'],
+            ['name' => 'Accountant', 'description' => 'Maintains ledgers, reconciles accounts, and prepares financial statements.'],
+            ['name' => 'IT Support Specialist', 'description' => 'Provides technical support for hardware, software, and user access issues.'],
+            ['name' => 'Systems Administrator', 'description' => 'Maintains servers, systems configuration, backups, and infrastructure reliability.'],
+            ['name' => 'Data Encoder', 'description' => 'Encodes and validates records with a focus on accuracy and completeness.'],
+            ['name' => 'Registrar Officer', 'description' => 'Manages registration records, documentation, and student information updates.'],
+            ['name' => 'Guidance Counselor', 'description' => 'Supports employee or student wellness, counseling, and intervention programs.'],
+            ['name' => 'Security Officer', 'description' => 'Ensures safety, monitors premises, and responds to security incidents.'],
+            ['name' => 'Maintenance Technician', 'description' => 'Performs repairs, preventive maintenance, and facility upkeep tasks.'],
+            ['name' => 'Procurement Officer', 'description' => 'Coordinates purchasing, vendor communication, and supply acquisition processes.'],
+            ['name' => 'Records Officer', 'description' => 'Organizes, secures, and retrieves institutional records efficiently.'],
+            ['name' => 'Training Coordinator', 'description' => 'Plans learning sessions, tracks participation, and supports staff development.'],
+            ['name' => 'Operations Supervisor', 'description' => 'Supervises daily operations, workflow performance, and team coordination.'],
+            ['name' => 'Compliance Officer', 'description' => 'Monitors adherence to policies, standards, and regulatory requirements.'],
+            ['name' => 'Project Coordinator', 'description' => 'Tracks project deliverables, timelines, and cross-team communication.'],
+            ['name' => 'Customer Service Representative', 'description' => 'Handles inquiries, resolves concerns, and improves service experience.'],
+        ]);
+
+        JobTitle::upsert($jobTitles->all(), uniqueBy: ['name'], update: ['description']);
+
+        $jobTitles->each(fn (array $jobTitle) => $this->line("Job title ready: {$jobTitle['name']}"));
+
+        return $jobTitles->count();
     }
 
     private function importEmployeesFromJson(): int
