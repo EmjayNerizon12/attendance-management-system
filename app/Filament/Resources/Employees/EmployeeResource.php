@@ -9,6 +9,7 @@ use App\Filament\Resources\Employees\Pages\ViewEmployee;
 use App\Filament\Resources\Employees\Schemas\EmployeeForm;
 use App\Filament\Resources\Employees\Schemas\EmployeeInfolist;
 use App\Filament\Resources\Employees\Tables\EmployeesTable;
+use App\Filament\Resources\Employees\Widgets\EmployeeStats;
 use App\Models\Employee;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +23,7 @@ class EmployeeResource extends Resource
 {
     protected static ?string $model = Employee::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Human Resources';
     protected static ?int $navigationSort = 3;
@@ -53,10 +54,16 @@ class EmployeeResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
-
+    public static function getWidgets(): array
+    {
+        return [
+            EmployeeStats::class,
+        ];
+    }
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('viewAny', Employee::class) ?? false;
+        $user = \Illuminate\Support\Facades\Auth::user();
+        return $user?->can('viewAny', Employee::class) ?? false;
     }
 
     public static function getPages(): array

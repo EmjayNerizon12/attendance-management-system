@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\ClockIns\Tables;
 
+use App\Enums\RolesEnum;
+use App\Models\ClockIn;
+use App\Models\Employee;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -13,17 +16,25 @@ class ClockInsTable
 {
     public static function configure(Table $table): Table
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
-                TextColumn::make('employee_id')
-                    ->searchable(),
+                TextColumn::make('employee.full_name')
+                    ->label('Employee')
+                    ->searchable()
+                    ->sortable()
+                    ->visible($user->hasRole(RolesEnum::Admin->value)),
+                TextColumn::make('started_date')
+                    ->label('Date')
+
+                    ->sortable(),
                 TextColumn::make('started_at')
                     ->dateTime()
-                    ->timezone(config('app.timezone'))
-                    ->sortable(),
+                    ->formatStateUsing(function ($state) use ($user): string {
+                        return $state instanceof \Carbon\Carbon
+                            ? $state->setTimezone($user->timezone)->format('h:i A')
+                            : '';
+                    }),
                 TextColumn::make('note')
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -48,6 +59,7 @@ class ClockInsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('started_at', 'desc');
     }
 }

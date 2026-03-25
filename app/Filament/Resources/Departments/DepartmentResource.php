@@ -28,13 +28,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static string|\UnitEnum|null $navigationGroup = 'Human Resources';
     protected static ?int $navigationSort = 1;
 
-      public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::count();
     }
@@ -54,10 +54,15 @@ class DepartmentResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Department')
                     ->searchable(),
                 TextColumn::make('head.full_name')
                     ->label('Manager')
-                    ->placeholder('No manager')
+                    ->placeholder('-')
+                    ->searchable(),
+                TextColumn::make('supervisor.full_name')
+                    ->label('Supervisor')
+                    ->placeholder('-')
                     ->searchable(),
             ])
             ->filters([
@@ -95,7 +100,8 @@ class DepartmentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('viewAny', Department::class) ?? false;
+        $user = \Illuminate\Support\Facades\Auth::user();
+        return $user?->can('viewAny', Department::class) ?? false;
     }
 
     public static function getPages(): array

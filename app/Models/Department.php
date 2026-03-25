@@ -23,4 +23,7 @@ class Department extends Model
     {
         return $this->hasOne(Employee::class)->where('role', \App\Enums\EmployeeRoleEnum::Manager);
     }
+    public function supervisor(){
+        return $this->hasOne(Employee::class)->where('role', \App\Enums\EmployeeRoleEnum::Supervisor);
+    }
 }

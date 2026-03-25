@@ -22,6 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Widgets\LatestClockInWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -48,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                LatestClockInWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -64,7 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->globalSearch(false)
             ->defaultThemeMode(ThemeMode::Dark)
-            ->brandName('Ctrl-Alt-Elite')
+            ->brandName('Foxter')
             ->brandLogo(asset('images/logo.png'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('images/favicon.ico'))

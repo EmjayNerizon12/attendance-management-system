@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('address');
             $table->date('hire_date')->nullable();
             $table->decimal('salary', 12, 2)->nullable();
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')
                 ->references('id')->on('users')->onDelete('cascade');

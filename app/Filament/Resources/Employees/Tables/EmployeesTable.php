@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Employees\Tables;
 
 use App\Models\Employee;
+use Filament\Tables\Columns\BadgeColumn;
 use Illuminate\Support\Facades\Gate;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -16,6 +17,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -56,6 +58,9 @@ class EmployeesTable
                 TextColumn::make('salary')
                     ->money('USD')
                     ->sortable(),
+                IconColumn::make('is_active')
+                    ->alignCenter()
+                    ->boolean(),
                 TextColumn::make('address')
                     ->searchable(),
                 TextColumn::make('created_at')

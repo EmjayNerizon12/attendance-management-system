@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Employee extends Model 
+class Employee extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -39,16 +39,16 @@ class Employee extends Model
         return $this->hasMany(ClockIn::class);
     }
     protected function fullName(): Attribute
-{
-    return Attribute::make(
-        get: fn () => trim(implode(' ', array_filter([
-            $this->fname,
-            $this->mname,
-            $this->lname,
-            $this->suffix,
-        ]))),
-    );
-}
+    {
+        return Attribute::make(
+            get: fn() => trim(implode(' ', array_filter([
+                $this->fname,
+                $this->mname,
+                $this->lname,
+                $this->suffix,
+            ]))),
+        );
+    }
 
     protected $casts = [
         'role' => \App\Enums\EmployeeRoleEnum::class,

@@ -12,8 +12,7 @@ class ClockInForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $user = auth()->user();
-
+        $user = \Illuminate\Support\Facades\Auth::user();
         return $schema
             ->components([
                 Select::make('employee_id')

@@ -17,6 +17,13 @@ class JobTitlesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('total_employee')
+                    ->formatStateUsing(fn($state): string => (
+                        $state > 0 ? "{$state} Employee" : "None"
+                    ))
+                    ->label('Total Employee with the Job Title')
+                    ->badge()
+                    ->color('primary'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -37,6 +44,7 @@ class JobTitlesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name', 'asc');
     }
 }

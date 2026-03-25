@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\RestrictToEmployeeScope;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -34,6 +35,17 @@ class ClockIn extends Model
                 $model->id = (string) Str::uuid();
             }
         });
+    }
+    protected function startedDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->started_at
+                ? $this->started_at
+                    ->copy()
+                    ->setTimezone(config('employee.timezone', config('app.timezone')))
+                    ->format('F d, Y')
+                : null,
+        );
     }
 
     public function employee()
