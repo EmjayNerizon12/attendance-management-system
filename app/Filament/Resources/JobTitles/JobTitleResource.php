@@ -49,6 +49,11 @@ class JobTitleResource extends Resource
             //
         ];
     }
+    public static function canViewAny(): bool
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        return $user->can('viewAny', JobTitle::class);
+    }
 
     public static function getPages(): array
     {

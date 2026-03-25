@@ -6,18 +6,7 @@ return [
     'timezone' => env('APP_TIMEZONE', config('app.timezone')),
     'permissions' => [
         RolesEnum::Admin->value => [
-            'Department.viewAny',
-            'Department.view',
-            'Department.create',
-            'Department.update',
-            'Department.delete',
-            'Department.forceDelete',
-            'Employee.viewAny',
-            'Employee.view',
-            'Employee.create',
-            'Employee.update',
-            'Employee.delete',
-            'Employee.forceDelete',
+            '*'
         ],
 
         RolesEnum::Manager->value => [
