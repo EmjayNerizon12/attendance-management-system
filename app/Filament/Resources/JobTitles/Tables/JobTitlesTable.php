@@ -49,8 +49,8 @@ class JobTitlesTable
                     ->button()
                     ->color('gray')
                     ->label('Actions')
-                    ->icon(Heroicon::ChevronDown)
-                    ->iconPosition(IconPosition::After)
+                    ->icon(Heroicon::EllipsisVertical)
+                    ->iconPosition(IconPosition::Before)
                     ->tooltip('Actions'),
             ])
             ->toolbarActions([

@@ -78,8 +78,8 @@ class DepartmentResource extends Resource
                     ->button()
                     ->color('gray')
                     ->label('Actions')
-                    ->icon(Heroicon::ChevronDown)
-                    ->iconPosition(IconPosition::After),
+                    ->icon(Heroicon::EllipsisVertical)
+                    ->iconPosition(IconPosition::Before),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
