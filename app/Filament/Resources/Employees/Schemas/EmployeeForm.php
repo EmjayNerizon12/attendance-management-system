@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Employees\Schemas;
 
+use App\Enums\EmployeeRoleEnum;
+use App\Enums\EmploymentTypeEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -35,8 +37,8 @@ class EmployeeForm
                     ->required(),
                 Select::make('role')
                     ->label('Employee Role')
-                    ->options(\App\Enums\EmployeeRoleEnum::class)
-                    ->default(\App\Enums\EmployeeRoleEnum::Staff),
+                    ->options(EmployeeRoleEnum::class)
+                    ->default(EmployeeRoleEnum::Staff),
                 Select::make('department_id')
                     ->label('Department')
                     ->relationship('department', 'name')
@@ -50,8 +52,8 @@ class EmployeeForm
                     ->preload(),
                 Select::make('employment_type')
                     ->label('Employment Type')
-                    ->options(\App\Enums\EmploymentTypeEnum::class)
-                    ->default(\App\Enums\EmploymentTypeEnum::FullTime)
+                    ->options(EmploymentTypeEnum::class)
+                    ->default(EmploymentTypeEnum::FullTime)
                     ->required(),
                 TextInput::make('address')
                     ->required(),

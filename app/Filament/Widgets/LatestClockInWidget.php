@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\ClockIn;
-use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;

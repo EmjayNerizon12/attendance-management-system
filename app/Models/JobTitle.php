@@ -14,9 +14,11 @@ class JobTitle extends Model
     {
         return $this->hasMany(Employee::class);
     }
-    public function totalEmployee():Attribute {
+
+    public function totalEmployee(): Attribute
+    {
         return Attribute::make(
-            get:fn()=>$this->employees->count()
+            get: fn () => $this->employees->count()
         );
     }
 }

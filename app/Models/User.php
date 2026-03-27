@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     protected string $guard_name = 'web';
 
@@ -52,6 +52,7 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+
     public function employee()
     {
         return $this->hasOne(Employee::class);
@@ -61,10 +62,11 @@ class User extends Authenticatable implements FilamentUser
     {
         return true;
     }
+
     protected function timezone(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value): string => $value ?? config('employee.timezone'),
+            get: fn (?string $value): string => $value ?? config('employee.timezone'),
         );
     }
 }

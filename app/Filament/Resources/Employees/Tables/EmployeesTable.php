@@ -2,19 +2,16 @@
 
 namespace App\Filament\Resources\Employees\Tables;
 
+use App\Enums\EmployeeRoleEnum;
+use App\Enums\EmploymentTypeEnum;
 use App\Models\Employee;
-use Filament\Tables\Columns\BadgeColumn;
-use Illuminate\Support\Facades\Gate;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -22,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 
 class EmployeesTable
 {
@@ -47,8 +45,8 @@ class EmployeesTable
                 TextColumn::make('role')
                     ->searchable()
                     ->badge()
-                    ->color(fn($state) => $state->getColor())
-                    ->icon(fn($state) => $state->getIcon()),
+                    ->color(fn ($state) => $state->getColor())
+                    ->icon(fn ($state) => $state->getIcon()),
                 TextColumn::make('employment_type')
                     ->label('Employment Type')
                     ->badge(),
@@ -76,7 +74,7 @@ class EmployeesTable
             ->filters([
                 SelectFilter::make('role')
                     ->label('Role')
-                    ->options(\App\Enums\EmployeeRoleEnum::class),
+                    ->options(EmployeeRoleEnum::class),
                 SelectFilter::make('department_id')
                     ->label('Department')
                     ->relationship('department', 'name'),
@@ -85,15 +83,15 @@ class EmployeesTable
                     ->relationship('jobTitle', 'name'),
                 SelectFilter::make('employment_type')
                     ->label('Employment Type')
-                    ->options(\App\Enums\EmploymentTypeEnum::class),
+                    ->options(EmploymentTypeEnum::class),
                 TrashedFilter::make(),
             ])
             ->recordActions([
                 ActionGroup::make([
-                   EditAction::make()
-                        ->visible(fn(Employee $record): bool => Gate::allows('update', $record)),
+                    EditAction::make()
+                        ->visible(fn (Employee $record): bool => Gate::allows('update', $record)),
                     DeleteAction::make()
-                        ->visible(fn(Employee $record): bool => Gate::allows('delete', $record)),
+                        ->visible(fn (Employee $record): bool => Gate::allows('delete', $record)),
                 ])
                     ->button()
                     ->color('gray')
@@ -105,11 +103,11 @@ class EmployeesTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(fn(): bool => Gate::allows('deleteAny', Employee::class)),
+                        ->visible(fn (): bool => Gate::allows('deleteAny', Employee::class)),
                     RestoreBulkAction::make()
-                        ->visible(fn(): bool => Gate::allows('restoreAny', Employee::class)),
+                        ->visible(fn (): bool => Gate::allows('restoreAny', Employee::class)),
                     ForceDeleteBulkAction::make()
-                        ->visible(fn(): bool => Gate::allows('forceDeleteAny', Employee::class)),
+                        ->visible(fn (): bool => Gate::allows('forceDeleteAny', Employee::class)),
                 ]),
             ]);
     }

@@ -2,9 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\ClockIn;
-use App\Models\User;
-
 class ClockInPolicy
 {
     /**

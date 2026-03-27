@@ -12,12 +12,13 @@ use App\Filament\Resources\Employees\Tables\EmployeesTable;
 use App\Filament\Resources\Employees\Widgets\EmployeeStats;
 use App\Models\Employee;
 use BackedEnum;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeResource extends Resource
 {
@@ -26,7 +27,9 @@ class EmployeeResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Human Resources';
+
     protected static ?int $navigationSort = 3;
+
     public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::count();
@@ -54,15 +57,18 @@ class EmployeeResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
     public static function getWidgets(): array
     {
         return [
             EmployeeStats::class,
         ];
     }
+
     public static function canViewAny(): bool
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
+
         return $user?->can('viewAny', Employee::class) ?? false;
     }
 

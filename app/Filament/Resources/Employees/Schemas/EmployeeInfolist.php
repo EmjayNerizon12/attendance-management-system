@@ -28,8 +28,8 @@ class EmployeeInfolist
                     ->placeholder('-'),
                 TextEntry::make('role')
                     ->badge()
-                    ->color(fn($state) => $state->getColor())
-                    ->icon(fn($state) => $state->getIcon()),
+                    ->color(fn ($state) => $state->getColor())
+                    ->icon(fn ($state) => $state->getIcon()),
                 TextEntry::make('employment_type')
                     ->label('Employment Type')
                     ->badge(),

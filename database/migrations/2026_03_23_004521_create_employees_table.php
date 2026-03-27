@@ -1,10 +1,11 @@
 <?php
 
+use App\Enums\EmployeeRoleEnum;
+use App\Enums\EmploymentTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\EmploymentTypeEnum;
-use App\Enums\EmployeeRoleEnum;
+
 return new class extends Migration
 {
     /**

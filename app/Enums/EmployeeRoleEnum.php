@@ -2,17 +2,17 @@
 
 namespace App\Enums;
 
-use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
-enum EmployeeRoleEnum: string implements HasLabel,HasColor,HasIcon
+enum EmployeeRoleEnum: string implements HasColor, HasIcon, HasLabel
 {
     const DEFAULT = self::Staff;
-    case Manager = "manager";
-    case Supervisor = "supervisor";
-    case Staff = "staff";
-    case Admin = "admin";
+    case Manager = 'manager';
+    case Supervisor = 'supervisor';
+    case Staff = 'staff';
+    case Admin = 'admin';
 
     public function getLabel(): string
     {
@@ -23,6 +23,7 @@ enum EmployeeRoleEnum: string implements HasLabel,HasColor,HasIcon
             self::Admin => 'Admin',
         };
     }
+
     public function getColor(): string
     {
         return match ($this) {
@@ -32,7 +33,8 @@ enum EmployeeRoleEnum: string implements HasLabel,HasColor,HasIcon
             self::Admin => 'primary',
         };
     }
-    public function getIcon():string
+
+    public function getIcon(): string
     {
         return match ($this) {
             self::Manager => 'heroicon-o-shield-exclamation',

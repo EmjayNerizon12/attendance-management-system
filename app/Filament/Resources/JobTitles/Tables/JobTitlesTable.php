@@ -22,8 +22,8 @@ class JobTitlesTable
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('total_employee')
-                    ->formatStateUsing(fn($state): string => (
-                        $state > 0 ? "{$state} Employee" : "None"
+                    ->formatStateUsing(fn ($state): string => (
+                        $state > 0 ? "{$state} Employee" : 'None'
                     ))
                     ->label('Total Employee with the Job Title')
                     ->badge()

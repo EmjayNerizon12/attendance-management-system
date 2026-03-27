@@ -7,22 +7,24 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class ClockInForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
+
         return $schema
             ->components([
                 Select::make('employee_id')
                     ->label('Employee')
                     ->relationship('employee')
-                    ->getOptionLabelFromRecordUsing(fn(Employee $record): string => $record->full_name)
+                    ->getOptionLabelFromRecordUsing(fn (Employee $record): string => $record->full_name)
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->default(fn() => $user?->employee?->id)
+                    ->default(fn () => $user?->employee?->id)
                     ->selectablePlaceholder(false),
                 DateTimePicker::make('started_at')
                     ->timezone(config('app.timezone')),

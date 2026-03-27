@@ -15,19 +15,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class JobTitleResource extends Resource
 {
     protected static ?string $model = JobTitle::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Human Resources';
+
     protected static ?int $navigationSort = 2;
 
-      public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::count();
     }
+
     public static function form(Schema $schema): Schema
     {
         return JobTitleForm::configure($schema);
@@ -49,9 +53,11 @@ class JobTitleResource extends Resource
             //
         ];
     }
+
     public static function canViewAny(): bool
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
+
         return $user->can('viewAny', JobTitle::class);
     }
 

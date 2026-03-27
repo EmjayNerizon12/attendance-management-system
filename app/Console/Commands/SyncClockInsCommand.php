@@ -67,6 +67,7 @@ class SyncClockInsCommand extends Command
 
             if ($employeeStartDate->gt($endDate)) {
                 $progressBar->advance();
+
                 continue;
             }
 
@@ -93,6 +94,7 @@ class SyncClockInsCommand extends Command
 
                 if ($existingDates->has($day)) {
                     $skippedCount++;
+
                     continue;
                 }
 

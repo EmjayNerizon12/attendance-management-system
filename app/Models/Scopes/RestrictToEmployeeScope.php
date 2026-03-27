@@ -19,7 +19,7 @@ class RestrictToEmployeeScope implements Scope
         }
 
         if (
-            $user->hasRole(RolesEnum::Admin->value)  
+            $user->hasRole(RolesEnum::Admin->value)
         ) {
             return;
         }

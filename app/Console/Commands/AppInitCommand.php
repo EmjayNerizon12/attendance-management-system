@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\EmploymentTypeEnum;
 use App\Enums\EmployeeRoleEnum;
+use App\Enums\EmploymentTypeEnum;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\JobTitle;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -246,7 +246,6 @@ class AppInitCommand extends Command
         ];
     }
 
-
     private function assignRolesToUsers(): int
     {
         $this->info('Assigning roles to users...');
@@ -366,7 +365,7 @@ class AppInitCommand extends Command
 
         if ($employee['hire_date'] !== null && strtotime($employee['hire_date']) === false) {
             $this->warn("Skipping {$file}: invalid hire_date '{$employee['hire_date']}'.");
- 
+
             return null;
         }
 
@@ -422,5 +421,4 @@ class AppInitCommand extends Command
 
         return $data;
     }
-
 }

@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\EmployeeRoleEnum;
+use App\Enums\EmploymentTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -24,6 +26,7 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function department()
     {
         return $this->belongsTo(Department::class)->withTrashed();
@@ -38,10 +41,11 @@ class Employee extends Model
     {
         return $this->hasMany(ClockIn::class);
     }
+
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn() => trim(implode(' ', array_filter([
+            get: fn () => trim(implode(' ', array_filter([
                 $this->fname,
                 $this->mname,
                 $this->lname,
@@ -51,8 +55,8 @@ class Employee extends Model
     }
 
     protected $casts = [
-        'role' => \App\Enums\EmployeeRoleEnum::class,
-        'employment_type' => \App\Enums\EmploymentTypeEnum::class,
+        'role' => EmployeeRoleEnum::class,
+        'employment_type' => EmploymentTypeEnum::class,
         'hire_date' => 'date',
         'salary' => 'decimal:2',
         'deleted_at' => 'datetime',

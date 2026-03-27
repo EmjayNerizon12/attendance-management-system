@@ -6,7 +6,7 @@ return [
     'timezone' => env('APP_TIMEZONE', config('app.timezone')),
     'permissions' => [
         RolesEnum::Admin->value => [
-            '*'
+            '*',
         ],
 
         RolesEnum::Manager->value => [
