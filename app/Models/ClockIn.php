@@ -23,7 +23,7 @@ class ClockIn extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new RestrictToEmployeeScope());
+        static::addGlobalScope(new RestrictToEmployeeScope);
     }
 
     protected static function boot()
@@ -36,16 +36,22 @@ class ClockIn extends Model
             }
         });
     }
+
     protected function startedDate(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->started_at
+            get: fn () => $this->started_at
                 ? $this->started_at
                     ->copy()
                     ->setTimezone(config('employee.timezone', config('app.timezone')))
                     ->format('F d, Y')
                 : null,
         );
+    }
+
+    public function clockOut()
+    {
+        return $this->hasMany(ClockOut::class);
     }
 
     public function employee()
