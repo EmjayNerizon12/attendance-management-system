@@ -64,9 +64,9 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearch(false)
             ->defaultThemeMode(ThemeMode::Dark)
             ->brandName('Foxter')
-            ->brandLogo(asset('images/logo.png'))
+            ->brandLogo(secure_asset('images/logo.png'))
             ->brandLogoHeight('3rem')
-            ->favicon(asset('images/favicon.ico'))
+            ->favicon(secure_asset('images/favicon.ico'))
             ->maxContentWidth(Width::Full)
             ->font('Poppins')
             ->passwordReset();
