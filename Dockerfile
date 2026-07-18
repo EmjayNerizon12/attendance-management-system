@@ -81,8 +81,8 @@ EXPOSE 10000
 
 CMD sh -c "\
 php artisan config:clear && \
-php artisan cache:clear && \
 php artisan package:discover && \
 php artisan migrate --force && \
+php artisan cache:clear && \
 php artisan app:init && \
 php artisan serve --host=0.0.0.0 --port=\$PORT"
