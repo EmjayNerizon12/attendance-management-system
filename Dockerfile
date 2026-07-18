@@ -22,8 +22,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN if [ ! -f .env ]; then cp .env.example .env; fi
-
 RUN composer install \
     --no-dev \
     --prefer-dist \
@@ -82,7 +80,9 @@ RUN mkdir -p database \
 EXPOSE 10000
 
 CMD sh -c "\
-php artisan key:generate --force && \
+php artisan config:clear && \
+php artisan cache:clear && \
+php artisan package:discover && \
 php artisan migrate --force && \
 php artisan app:init && \
 php artisan serve --host=0.0.0.0 --port=\$PORT"
