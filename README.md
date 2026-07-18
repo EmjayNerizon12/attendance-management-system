@@ -1,59 +1,382 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Deploying Laravel 12 + Filament + SQLite to Render (Docker)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Prerequisites
 
-## About Laravel
+- Laravel 12
+- Vue 3 + Vite
+- Filament 4
+- SQLite
+- GitHub Repository
+- Render Account
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# 1. Prepare the Laravel Project
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 1.1 Create the SQLite Database
 
-## Learning Laravel
+Do **not** commit `database.sqlite` to GitHub.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Create the file locally:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+touch database/database.sqlite
+```
 
-## Laravel Sponsors
+Your project should contain:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+database/
+├── database.sqlite
+├── migrations/
+└── seeders/
+```
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 1.2 Ignore SQLite Database
 
-## Contributing
+Add to `.gitignore`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```gitignore
+/database/database.sqlite
+```
 
-## Code of Conduct
+If it was already committed:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git rm --cached database/database.sqlite
+git add .gitignore
+git commit -m "Ignore SQLite database"
+git push
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 1.3 Local Environment
 
-## License
+Example `.env`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+APP_NAME="Attendance Management System"
+APP_ENV=local
+APP_KEY=base64:YOUR_KEY
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database/database.sqlite
+```
+
+Run locally:
+
+```bash
+php artisan migrate
+php artisan app:init
+php artisan serve
+```
+
+Verify everything works.
+
+---
+
+# 2. Create Dockerfile
+
+Create:
+
+```
+Dockerfile
+```
+
+Example:
+
+```dockerfile
+# ==========================================
+# Stage 1 - Composer
+# ==========================================
+FROM php:8.3-cli AS vendor
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libicu-dev \
+    libsqlite3-dev \
+    libzip-dev \
+    && docker-php-ext-install \
+        intl \
+        pdo \
+        pdo_sqlite \
+        zip \
+        opcache
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY . .
+
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --no-interaction \
+    --no-progress \
+    --optimize-autoloader
+
+# ==========================================
+# Stage 2 - Node
+# ==========================================
+FROM node:22-alpine AS assets
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+# ==========================================
+# Stage 3 - Production
+# ==========================================
+FROM php:8.3-cli
+
+WORKDIR /var/www/html
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    sqlite3 \
+    libsqlite3-dev \
+    libzip-dev \
+    libicu-dev \
+    && docker-php-ext-install \
+        intl \
+        pdo \
+        pdo_sqlite \
+        zip \
+        opcache
+
+COPY --from=vendor /app /var/www/html
+
+COPY --from=assets /app/public/build ./public/build
+
+RUN mkdir -p /var/www/html/database \
+    && touch /var/www/html/database/database.sqlite \
+    && chmod -R 775 storage bootstrap/cache database
+
+EXPOSE 10000
+
+CMD sh -c "\
+php artisan optimize:clear && \
+php artisan migrate --force && \
+php artisan app:init && \
+php artisan serve --host=0.0.0.0 --port=\$PORT"
+```
+
+---
+
+# 3. Create .dockerignore
+
+```text
+.git
+.github
+vendor
+node_modules
+.env
+storage/logs/*
+storage/framework/cache/*
+storage/framework/views/*
+storage/framework/sessions/*
+```
+
+---
+
+# 4. Push to GitHub
+
+```bash
+git add .
+git commit -m "Prepare Render deployment"
+git push origin main
+```
+
+---
+
+# 5. Create Render Web Service
+
+1. Login to Render
+2. Click **New**
+3. Select **Web Service**
+4. Connect GitHub Repository
+5. Render detects the Dockerfile
+6. Choose Docker Environment
+7. Create Service
+
+---
+
+# 6. Configure Environment Variables
+
+Go to:
+
+```
+Render
+└── Web Service
+    └── Environment
+```
+
+Add:
+
+```env
+APP_NAME=Attendance Management System
+
+APP_ENV=production
+APP_DEBUG=false
+
+APP_KEY=base64:YOUR_APP_KEY
+
+APP_URL=https://your-app-name.onrender.com
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=sqlite
+DB_DATABASE=/var/www/html/database/database.sqlite
+
+CACHE_STORE=file
+SESSION_DRIVER=file
+QUEUE_CONNECTION=sync
+FILESYSTEM_DISK=public
+```
+
+Never commit your production `.env` file.
+
+Render injects these variables when the container starts.
+
+---
+
+# 7. Deployment Flow
+
+```
+GitHub
+    │
+    ▼
+Docker Build
+(Dockerfile executes)
+    │
+    ▼
+Docker Image
+    │
+    ▼
+Render starts Container
+    │
+    ▼
+Render injects Environment Variables
+(APP_KEY, APP_URL, DB_*, etc.)
+    │
+    ▼
+CMD executes
+    │
+    ▼
+Laravel starts
+```
+
+---
+
+# 8. Runtime Commands
+
+The container executes:
+
+```bash
+php artisan optimize:clear
+php artisan migrate --force
+php artisan app:init
+php artisan serve --host=0.0.0.0 --port=$PORT
+```
+
+---
+
+# 9. Common Errors
+
+## No application encryption key has been specified
+
+Cause
+
+- APP_KEY missing
+
+Fix
+
+- Add APP_KEY in Render Environment Variables
+- Redeploy
+
+---
+
+## Database file does not exist
+
+Cause
+
+Wrong SQLite path.
+
+Correct:
+
+```env
+DB_DATABASE=/var/www/html/database/database.sqlite
+```
+
+---
+
+## Mixed Content (CSS/JS blocked)
+
+Cause
+
+Laravel generated HTTP URLs.
+
+Fix
+
+Render:
+
+```env
+APP_URL=https://your-app-name.onrender.com
+```
+
+AppServiceProvider:
+
+```php
+use Illuminate\Support\Facades\URL;
+
+public function boot(): void
+{
+    if ($this->app->isProduction()) {
+        URL::forceScheme('https');
+    }
+}
+```
+
+Then:
+
+```bash
+php artisan optimize:clear
+```
+
+Redeploy.
+
+---
+
+## Broken UI
+
+Check:
+
+- npm run build completed
+- public/build exists
+- manifest.json exists
+- Browser console has no 404 errors
+
+---
+
+# 10. Notes
+
+- Do **not** commit `.env`.
+- Do **not** commit `database.sqlite`.
+- Let Docker create the SQLite file.
+- Let Render provide all environment variables.
+- Use SQLite only for demo/portfolio projects on the free plan, since the filesystem is ephemeral.
